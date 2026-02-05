@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITED PromptLab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .prompt-card-text { white-space: pre-wrap; word-wrap: break-word; }
+        .sidebar { transition: width 0.3s ease; }
+        .main-content { transition: margin-left 0.3s ease; }
+        .sidebar-link-text { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar fixed top-0 left-0 z-40 w-64 h-screen bg-white shadow-lg">
+            <div class="flex flex-col h-full">
+                <!-- Sidebar Header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h1 class="text-xl font-bold text-gray-800">
+                        <span class="text-red-600">ITED</span> <span class="bg-green-100 px-2 rounded-md">PromptLab</span>
+                    </h1>
+                     <button id="sidebarToggleMobile" class="md:hidden p-1">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="flex-grow px-4 py-4 space-y-2">
+                    <a href="#" class="nav-link flex items-center p-3 text-base font-medium text-gray-900 rounded-lg bg-blue-100 text-blue-700" data-view="aocfView">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path></svg>
+                        <span class="sidebar-link-text ml-3">Crea prompts con AOCF</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center p-3 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100" data-view="examplesView">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"></path></svg>
+                        <span class="sidebar-link-text ml-3">Ejemplos de prompts</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center p-3 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100" data-view="chatbotsView">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"></path></svg>
+                        <span class="sidebar-link-text ml-3">Chatbots para usar</span>
+                    </a>
+                    <a href="#" class="nav-link flex items-center p-3 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100" data-view="quizView">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"></path></svg>
+                        <span class="sidebar-link-text ml-3">Mide tu conocimiento</span>
+                    </a>
+                </nav>
+
+                <!-- Sidebar Footer/Toggle -->
+                <div class="p-4 border-t">
+                    <button id="sidebarToggle" class="w-full flex items-center p-2 text-gray-600 rounded-lg hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        <span class="sidebar-link-text ml-3">Plegar menú</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div id="main-content" class="main-content md:ml-64 p-4 sm:p-8">
+            <main>
+                <!-- AOCF Form View -->
+                <div id="aocfView" class="app-view">
+                    <!-- Content from previous aocfView -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h1 class="text-2xl font-bold mb-1 text-center text-gray-800">Crea tus Prompts con la fórmula AOCF</h1>
+                        <p class="text-center text-gray-600 text-sm mb-6">Dr. Gerardo Ch. Chinguel</p>
+                        <form id="promptForm" class="space-y-5">
+                            <div class="pt-2"><h3 class="text-lg font-semibold text-gray-700">Paso 1: Completa el formulario con lo que necesitas</h3></div>
+                            <div>
+                                <div class="flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2 text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg><label for="action" class="block text-sm font-medium text-gray-700">Acción:</label><span class="text-red-600 ml-1">*</span></div>
+                                <p class="text-xs text-gray-500 mb-1 ml-1">Describe la actividad que la IA debe realizar para darte la respuesta.</p>
+                                <textarea id="action" name="action" rows="2" class="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-blue-500 focus:border-blue-500" placeholder="Elabora"></textarea>
+                                <p id="actionError" class="text-red-600 text-xs mt-1 hidden">Este campo es obligatorio.</p>
+                                <div class="mt-2 flex items-center"><input id="expertCheckbox" type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"><label for="expertCheckbox" class="ml-2 block text-sm text-gray-900">Actúa como un experto en...</label></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2 text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg><label for="objective" class="block text-sm font-medium text-gray-700">Objetivo:</label><span class="text-red-600 ml-1">*</span></div>
+                                <p class="text-xs text-gray-500 mb-1 ml-1">Describe qué quieres lograr o qué acción esperas de la audiencia.</p>
+                                <textarea id="objective" name="objective" rows="2" class="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-blue-500 focus:border-blue-500" placeholder="Una lista de 50 libros sobre IA para la educación"></textarea>
+                                <p id="objectiveError" class="text-red-600 text-xs mt-1 hidden">Este campo es obligatorio.</p>
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2 text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg><label for="context" class="block text-sm font-medium text-gray-700">Contexto:</label><span class="text-red-600 ml-1">*</span></div>
+                                <p class="text-xs text-gray-500 mb-1 ml-1">Proporciona información relevante, situación o restricciones importantes a considerar.</p>
+                                <textarea id="context" name="context" rows="2" class="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-blue-500 focus:border-blue-500" placeholder="Que sean best seller y que se hayan publicado en el último año, dirigido a docentes universitarios."></textarea>
+                                <p id="contextError" class="text-red-600 text-xs mt-1 hidden">Este campo es obligatorio.</p>
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2 text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg><label for="format" class="block text-sm font-medium text-gray-700">Formato:</label><span class="text-red-600 ml-1">*</span></div>
+                                <p class="text-xs text-gray-500 mb-1 ml-1">Especifica cómo debe ser la estructura o el estilo de la respuesta.</p>
+                                <textarea id="format" name="format" rows="2" class="w-full p-3 border border-gray-300 rounded-md resize-none focus:ring-blue-500 focus:border-blue-500" placeholder="Presenta todo en una tabla en español"></textarea>
+                                <p id="formatError" class="text-red-600 text-xs mt-1 hidden">Este campo es obligatorio.</p>
+                            </div>
+                            <div class="pt-4"><h3 class="text-lg font-semibold text-gray-700">Paso 2: Genera tu prompt con la fórmula AOCF</h3></div>
+                            <button type="submit" class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition duration-150"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>Generar Prompt</button>
+                             <!-- Optimize Prompt Checkbox -->
+                            <div class="mt-2 flex items-center">
+                                <input id="optimizeCheckbox" type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="optimizeCheckbox" class="ml-2 block text-sm text-gray-900">¿Quieres optimizar el Prompt para sea más efectivo?</label>
+                            </div>
+                        </form>
+                        <p id="tempMessage" class="text-sm text-center text-blue-700 mt-4 mb-2 hidden"></p>
+                        <div id="resultArea" class="mt-2 hidden">
+                            <label for="resultado" class="block text-sm font-medium text-gray-700 mb-1">Prompt Generado:</label>
+                            <textarea id="resultado" rows="6" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 resize-none" readonly></textarea>
+                            <button id="copyButton" class="mt-2 w-full flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md transition duration-150"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" /></svg>Copiar Prompt</button>
+                            <p id="copyMessage" class="text-sm text-green-600 mt-1 h-4"></p>
+                            <div id="chatbotLinksAOCF" class="mt-6 pt-6 border-t"><!-- Chatbots get injected here --></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples View -->
+                <div id="examplesView" class="app-view hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h1 class="text-2xl font-bold mb-2 text-center text-gray-800">Ejemplos de prompts educativos</h1>
+                        <p class="text-center text-gray-500 mb-6">Paso 1: Elige el prompt de tu preferencia.</p>
+                        <div id="example-cards-container" class="space-y-6"><!-- Example cards get injected here --></div>
+                        <div class="mt-8 pt-6 border-t">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Paso 2: Ejecuta los prompts en cualquier chatbot</h3>
+                            <div id="chatbotLinksExamples"><!-- Chatbots get injected here --></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chatbots View -->
+                <div id="chatbotsView" class="app-view hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h1 class="text-2xl font-bold mb-2 text-center text-gray-800">Chatbots para usar</h1>
+                        <p class="text-center text-gray-500 mb-6">Ejecuta los prompts en cualquiera de estos chatbots.</p>
+                        <div id="chatbotLinksStandalone"><!-- Chatbots get injected here --></div>
+                    </div>
+                </div>
+
+                <!-- Quiz View -->
+                <div id="quizView" class="app-view hidden">
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Mide tu conocimiento sobre Inteligencia Artificial Generativa</h1>
+                        <div id="game" class="mb-5"></div>
+                        <div id="feedback" class="mt-4 font-semibold text-center h-6"></div>
+                        <div id="game-results" class="mt-6 hidden">
+                            <h2 class="text-xl font-bold mb-4 text-center">¡Juego completado!</h2>
+                            <p class="text-lg text-center mb-4">Tu puntaje final es: <span id="final-score">0</span>/<span id="total-game-questions">0</span></p>
+                            <div id="summary" class="space-y-3 p-4 bg-gray-50 rounded-md"><h3 class="text-lg font-semibold mb-2">Resumen de respuestas correctas:</h3></div>
+                            <div class="text-center mt-6"><button id="retry-game-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150">Intentar de nuevo</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                 <footer class="text-center text-xs text-gray-500 mt-8 py-4 border-t">
+                    Todos los derechos reservados por el autor: Dr. Gerardo Ch. Chinguel - Instituto de Tecnologías para la Educación (ITED)
+                </footer>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Mobile Sidebar Toggle -->
+    <button id="sidebarToggleOpen" class="fixed top-4 left-4 z-50 md:hidden p-2 bg-white rounded-full shadow-md">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Sidebar and View Navigation ---
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
+            const sidebarToggleOpen = document.getElementById('sidebarToggleOpen');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const appViews = document.querySelectorAll('.app-view');
+
+            const showView = (viewId) => {
+                appViews.forEach(view => {
+                    view.classList.toggle('hidden', view.id !== viewId);
+                });
+                navLinks.forEach(link => {
+                    if (link.dataset.view === viewId) {
+                        link.classList.add('bg-blue-100', 'text-blue-700');
+                    } else {
+                        link.classList.remove('bg-blue-100', 'text-blue-700');
+                    }
+                });
+
+                // Special load for quiz
+                if (viewId === 'quizView' && !isGameLoaded) {
+                    initializeGame();
+                    isGameLoaded = true;
+                }
+                 // Close mobile sidebar on navigation
+                if (window.innerWidth < 768) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            };
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showView(link.dataset.view);
+                });
+            });
+
+            const toggleSidebar = () => {
+                const isCollapsed = sidebar.classList.toggle('w-20');
+                sidebar.classList.toggle('w-64', !isCollapsed);
+                mainContent.classList.toggle('md:ml-20', isCollapsed);
+                mainContent.classList.toggle('md:ml-64', !isCollapsed);
+
+                document.querySelectorAll('.sidebar-link-text').forEach(span => {
+                    span.classList.toggle('opacity-0');
+                    span.classList.toggle('hidden', isCollapsed);
+                });
+            };
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            sidebarToggleOpen.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+            sidebarToggleMobile.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+            
+            // Initialize mobile view
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+            }
+
+
+            // --- Data for Prompts and Chatbots ---
+            const examplePrompts = [
+                { title: 'Planifica tus clases', text: 'Actúa como un experto en didáctica universitaria, y dame [5] formas de enseñar de manera didáctica y divertida el tema de [estrategias de aprendizaje autónomo] con ejemplos reales. Dirigido a [estudiantes del primer ciclo de la escuela profesional de administración de la Universidad. A ellos no les gusta estudiar antes de la clase]. Presenta en viñetas' },
+                { title: 'Elabora diapositivas', text: 'Elabora [10] diapositivas sobre el tema [cómo elaborar materiales de clase y escritos académicos con inteligencia artificial] dirigido a [docentes universitarios]. Cada diapositiva debe tener el título de hasta 80 caracteres y 3 ideas principales de hasta 80 palabras y 2 citas bibliográficas en estilo APA. Presenta en español' },
+                { title: 'Guión de video', text: 'Elabora un script de video de un [1 minuto] sobre el tema [3 formas de utilizar chatgpt en la universidad], dirigido a [docentes universitarios] con el objetivo de [motivar a los docentes universitarios a utilizar esta herramienta en su labor docente]. Utiliza un tono [motivador]. Presenta sólo el texto del narrador. Presenta todo en español.' },
+                { title: 'Dinámicas de clase', text: 'Actúa como un experto en didáctica universitaria. Escribe 5 dinámicas de grupo divertidas para [fomentar el desarrollo de habilidades interpersonales entre los estudiantes y propiciar un ambiente más interactivo y agradable para e] curso de estrategias de aprendizaje autónomo]. Dirigido a [estudiantes universitarios del primer ciclo de la escuela profesional de ingeniería]. Presenta en viñetas el nombre de la dinámica, un ejemplo real, materiales utilizados, tiempo de duración, y 5 pasos detallados de cómo aplicarlo en un aula de clase.' },
+                { title: 'Rúbrica de evaluación', text: 'Actúa como un experto en didáctica universitaria. elabora una rúbrica de evaluación para calificar [el informe de una monografía]. Dirigido a [estudiantes del primer ciclo de la universidad]. Los niveles de logro son: Excelente, muy bueno, bueno, regular y Por mejorar. Presenta todo en una tabla.' }
+            ];
+
+            const chatbots = {
+                generic: [
+                    { name: 'ChatGPT', url: 'https://chat.openai.com/', initial: 'C', color: 'bg-teal-500' },
+                    { name: 'Gemini', url: 'https://gemini.google.com/', initial: 'G', color: 'bg-indigo-500' },
+                    { name: 'Copilot', url: 'https://copilot.microsoft.com/', initial: 'C', color: 'bg-cyan-500' },
+                    { name: 'Claude', url: 'https://claude.ai/', initial: 'C', color: 'bg-orange-500' },
+                    { name: 'Meta', url: 'https://www.meta.ai/', initial: 'M', color: 'bg-blue-600' },
+                    { name: 'Deepseek', url: 'https://chat.deepseek.com/', initial: 'D', color: 'bg-blue-400' },
+                    { name: 'Qwen', url: 'http://chat.qwenlm.ai', initial: 'Q', color: 'bg-purple-500' },
+                    { name: 'Minimax', url: 'https://chat.minimax.io/', initial: 'M', color: 'bg-blue-800' },
+                    { name: 'Grok', url: 'https://www.grok.com', initial: 'Gk', color: 'bg-gray-700' },
+                    { name: 'Z.AI', url: 'https://chat.z.ai', initial: 'Z', color: 'bg-zinc-500' }
+                ],
+                specialized: [
+                    { name: 'Perplexity', url: 'https://perplexity.ai', initial: 'P', color: 'bg-gray-800' },
+                    { name: 'Consensus', url: 'https://consensus.app', initial: 'C', color: 'bg-emerald-500' },
+                    { name: 'Scite', url: 'https://scite.ai/?ited', initial: 'S', color: 'bg-sky-500' }
+                ]
+            };
+
+            // --- Dynamic Content Injection ---
+            
+            // Function to create chatbot links HTML
+            const createChatbotLinksHTML = (chatbotData) => `
+                <h4 class="text-md font-semibold text-gray-600 mb-3 mt-4">Chatbots genéricos</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    ${chatbotData.generic.map(bot => `
+                        <a href="${bot.url}" target="_blank" class="flex flex-col items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                            <div class="w-10 h-10 mb-2 rounded-full flex items-center justify-center ${bot.color} text-white font-bold text-xl">${bot.initial}</div>
+                            <span class="text-sm font-semibold text-gray-800">${bot.name}</span>
+                        </a>`).join('')}
+                </div>
+                <h4 class="text-md font-semibold text-gray-600 mb-3 mt-6 pt-4 border-t">Chatbots especializados</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    ${chatbotData.specialized.map(bot => `
+                         <a href="${bot.url}" target="_blank" class="flex flex-col items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                            <div class="w-10 h-10 mb-2 rounded-full flex items-center justify-center ${bot.color} text-white font-bold text-xl">${bot.initial}</div>
+                            <span class="text-sm font-semibold text-gray-800">${bot.name}</span>
+                        </a>`).join('')}
+                </div>`;
+
+            // Function to create example prompt cards HTML
+            const createExampleCardsHTML = (prompts) => prompts.map(prompt => `
+                <div class="p-5 border rounded-lg bg-gray-50 transition-transform transform hover:scale-105 hover:shadow-lg">
+                    <h4 class="font-bold text-lg text-gray-800 mb-2">${prompt.title}</h4>
+                    <pre class="prompt-card-text text-gray-700 text-sm leading-relaxed bg-white p-3 rounded-md">${prompt.text}</pre>
+                    <button class="copy-example-btn mt-4 w-full flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md transition duration-150">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path></svg>
+                        <span>Copiar Prompt</span>
+                    </button>
+                </div>`).join('');
+
+            // Inject content into placeholders
+            document.getElementById('chatbotLinksAOCF').innerHTML = createChatbotLinksHTML(chatbots);
+            document.getElementById('chatbotLinksExamples').innerHTML = createChatbotLinksHTML(chatbots);
+            document.getElementById('chatbotLinksStandalone').innerHTML = createChatbotLinksHTML(chatbots);
+            document.getElementById('example-cards-container').innerHTML = createExampleCardsHTML(examplePrompts);
+
+
+            // --- AOCF Form Logic ---
+            const promptForm = document.getElementById('promptForm');
+            const actionTextarea = document.getElementById('action');
+            const objectiveTextarea = document.getElementById('objective');
+            const contextTextarea = document.getElementById('context');
+            const formatTextarea = document.getElementById('format');
+            const resultadoTextarea = document.getElementById('resultado');
+            const copyButton = document.getElementById('copyButton');
+            const copyMessage = document.getElementById('copyMessage');
+            const resultArea = document.getElementById('resultArea');
+            const expertCheckbox = document.getElementById('expertCheckbox');
+            const optimizeCheckbox = document.getElementById('optimizeCheckbox');
+            const tempMessage = document.getElementById('tempMessage');
+            const expertPrefix = "Actúa como un experto en ";
+            let tempMessageTimeoutId = null;
+            let baseGeneratedPrompt = ''; // Variable to store the base prompt
+
+            expertCheckbox.addEventListener('change', function() {
+                const currentActionValue = actionTextarea.value;
+                if (this.checked) {
+                    if (!currentActionValue.startsWith(expertPrefix)) actionTextarea.value = expertPrefix + currentActionValue;
+                } else {
+                    if (currentActionValue.startsWith(expertPrefix)) actionTextarea.value = currentActionValue.substring(expertPrefix.length);
+                }
+            });
+
+            // Function to update the displayed prompt based on the checkbox
+            function updateDisplayedPrompt() {
+                if (!baseGeneratedPrompt) return; 
+
+                let finalPrompt = baseGeneratedPrompt;
+                if (optimizeCheckbox.checked) {
+                    finalPrompt = `Actúa como un experto en prompt, revisa el siguiente prompt para mi y optimízalo para hacerlo mejor y hazme 3 preguntas antes de proceder.\nAquí el prompt [${baseGeneratedPrompt}]`;
+                }
+                resultadoTextarea.value = finalPrompt;
+            }
+            
+            promptForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                // Clear previous messages/states
+                if (tempMessageTimeoutId) clearTimeout(tempMessageTimeoutId);
+                tempMessage.classList.add('hidden');
+                document.querySelectorAll('[id$="Error"]').forEach(el => el.classList.add('hidden'));
+
+                let isValid = true;
+                const fields = [{el: actionTextarea, err: 'actionError'}, {el: objectiveTextarea, err: 'objectiveError'}, {el: contextTextarea, err: 'contextError'}, {el: formatTextarea, err: 'formatError'}];
+                
+                fields.forEach(field => {
+                    if (!field.el.value.trim()) {
+                        document.getElementById(field.err).classList.remove('hidden');
+                        isValid = false;
+                    }
+                });
+
+                if (isValid) {
+                    // Store the base prompt
+                    baseGeneratedPrompt = `${actionTextarea.value.trim()}, ${objectiveTextarea.value.trim()}, ${contextTextarea.value.trim()}. ${formatTextarea.value.trim()}`;
+                    
+                    // Update the display based on the current state of the checkbox
+                    updateDisplayedPrompt();
+
+                    copyMessage.textContent = '';
+                    tempMessage.textContent = "Ahora debes copiar el prompt y pegarlo en cualquier chatbot. Y no olvides darle coherencia a la redacción";
+                    tempMessage.classList.remove('hidden');
+                    tempMessageTimeoutId = setTimeout(() => tempMessage.classList.add('hidden'), 15000);
+                    resultArea.classList.remove('hidden');
+                } else {
+                    resultArea.classList.add('hidden');
+                    baseGeneratedPrompt = ''; // Reset on validation failure
+                }
+            });
+
+            // Add listener to the checkbox to update the prompt text dynamically
+            optimizeCheckbox.addEventListener('change', updateDisplayedPrompt);
+
+            copyButton.addEventListener('click', function() {
+                navigator.clipboard.writeText(resultadoTextarea.value).then(() => {
+                    copyMessage.textContent = '¡Prompt copiado al portapapeles!';
+                    setTimeout(() => copyMessage.textContent = '', 2000);
+                }).catch(() => {
+                    copyMessage.textContent = 'Error al copiar.';
+                });
+            });
+
+
+            // --- Example Prompts Copy Logic ---
+            document.querySelectorAll('.copy-example-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const textToCopy = e.currentTarget.previousElementSibling.textContent;
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        const span = e.currentTarget.querySelector('span');
+                        span.textContent = '¡Copiado!';
+                        setTimeout(() => span.textContent = 'Copiar Prompt', 2000);
+                    });
+                });
+            });
+
+            // --- Game Logic ---
+            let isGameLoaded = false;
+            // All game variables and functions are defined inside initializeGame to keep them local
+            function initializeGame() {
+                const gameContainer = document.getElementById('game');
+                const feedbackContainer = document.getElementById('feedback');
+                const gameResultsContainer = document.getElementById('game-results');
+                const finalScoreElement = document.getElementById('final-score');
+                const totalGameQuestionsElement = document.getElementById('total-game-questions');
+                const summaryContainer = document.getElementById('summary');
+                const retryGameButton = document.getElementById('retry-game-button');
+                
+                let gameCurrentQuestionIndex = 0;
+                let gameScore = 0;
+                
+                const gameData = [
+                    { question: "1. ¿Qué es inteligencia artificial?", options: ["Un robot físico", "Un software que piensa como humano", "La tecnología", "Solo algoritmos matemáticos"], answer: "La tecnología" },
+                    { question: "2. ¿Qué es inteligencia artificial generativa?", options: [ "IA que clasifica datos", "Rama de la IA que permite generar contenidos de tipo texto, imagen, audio o videos", "IA que solo traduce idiomas", "IA que analiza sentimientos" ], answer: "Rama de la IA que permite generar contenidos de tipo texto, imagen, audio o videos" },
+                    { question: "3. ¿Qué es un prompt?", options: [ "La respuesta de la IA", "Una instrucción que permite interactuar con los chatbots", "Un modelo de lenguaje", "Un error del sistema" ], answer: "Una instrucción que permite interactuar con los chatbots" },
+                    { question: "4. ¿Es necesario aprender a crear prompts por niveles (básico, intermedio o avanzado)?", options: [ "No, la IA adivina lo que quieres", "Sí, pero solo para programadores", "Sí, porque voy a obtener mejor información", "No, con prompts básicos es suficiente" ], answer: "Sí, porque voy a obtener mejor información" },
+                    { question: "5. ¿En qué te beneficia si aprendes a aplicar IA en tus clases?", options: [ "Complica la planificación", "Solo sirve para calificar exámenes", "Ahorro de tiempo, ser un docente innovador, ser más competitivo, fortalecer el aprendizaje de los estudiantes, fomentar el uso responsable de la IA", "Reemplaza completamente al docente" ], answer: "Ahorro de timepo, ser un docente innovador, ser más competitivo, fortalecer el aprendizaje de los estudiantes, fomentar el uso responsable de la IA" },
+                    { question: "6. ¿Qué riesgos pueden ocurrir si utilizas IA?", options: [ "La IA siempre es perfecta", "Solo el costo económico", "Dependencia tecnológica, obtener información errada", "Mejora automática de la creatividad" ], answer: "Dependencia tecnológica, obtener información errada" },
+                    { question: "7. ¿Cuál es la ruta para ser un docente innovador por saber aplicar IA?", options: [ "Comprar la última tecnología", "Esperar a que la IA haga todo", "Invertir en tu capacitación de alguién que tenga experiencias verificables, aplicar y practicar, documentar la experiencia, compartir los resultados y marketear tu marca personal por los resultados obtenidos", "Solo seguir tutoriales básicos en línea" ], answer: "Invertir en tu capacitación de alguién que tenga experiencias verificables, aplicar y practicar, documentar la experiencia, compartir los resultados y marketear tu marca personal por los resultados obtenidos" }
+                ];
+
+                function loadGameQuestion() {
+                    gameResultsContainer.classList.add('hidden');
+                    feedbackContainer.innerHTML = "";
+                    if (gameCurrentQuestionIndex >= gameData.length) {
+                        showGameResults();
+                        return;
+                    }
+                    const currentQuestion = gameData[gameCurrentQuestionIndex];
+                    gameContainer.innerHTML = `
+                        <p class="text-lg font-semibold mb-4 text-gray-700">${currentQuestion.question}</p>
+                        <div class="options space-y-2">
+                            ${currentQuestion.options.map(option => `<button class="game-option-button block w-full text-left p-3 border rounded-md bg-blue-50 hover:bg-blue-100 text-blue-800 transition">${option}</button>`).join('')}
+                        </div>`;
+                    gameContainer.querySelectorAll('.game-option-button').forEach(button => {
+                        button.addEventListener('click', () => checkGameAnswer(button.textContent, currentQuestion.answer, button));
+                    });
+                }
+
+                function checkGameAnswer(selectedOption, correctAnswer, clickedButton) {
+                    document.querySelectorAll('.game-option-button').forEach(btn => btn.disabled = true);
+                    if (selectedOption === correctAnswer) {
+                        feedbackContainer.innerHTML = `<p class="text-green-600 font-semibold">¡Correcto!</p>`;
+                        gameScore++;
+                        clickedButton.classList.add('bg-green-100', 'border-green-300');
+                    } else {
+                        feedbackContainer.innerHTML = `<p class="text-red-600 font-semibold">Incorrecto.</p>`;
+                        clickedButton.classList.add('bg-red-100', 'border-red-300');
+                    }
+                    setTimeout(() => {
+                        gameCurrentQuestionIndex++;
+                        loadGameQuestion();
+                    }, 1500);
+                }
+
+                function showGameResults() {
+                    gameContainer.innerHTML = '';
+                    finalScoreElement.textContent = gameScore;
+                    totalGameQuestionsElement.textContent = gameData.length;
+                    summaryContainer.innerHTML = '<h3 class="text-lg font-semibold mb-2">Resumen de Respuestas Correctas:</h3>' +
+                        gameData.map((q, i) => `<p class="text-sm text-gray-600"><strong>${i + 1}.</strong> ${q.answer}</p>`).join('');
+                    gameResultsContainer.classList.remove('hidden');
+                }
+                
+                retryGameButton.onclick = () => {
+                    gameCurrentQuestionIndex = 0;
+                    gameScore = 0;
+                    loadGameQuestion();
+                };
+
+                loadGameQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
